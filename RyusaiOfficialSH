@@ -15,7 +15,7 @@ local TweenInfo_Line = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDire
 local Theme = {
     Background = Color3.fromRGB(24, 24, 24),
     Glow = Color3.fromRGB(0, 0, 0),
-    Accent = Color3.fromRGB(60, 180, 255),
+    Accent = Color3.fromRGB(60, 180, 255), -- Changed to Light Blue
     LightContrast = Color3.fromRGB(30, 30, 30),
     DarkContrast = Color3.fromRGB(20, 20, 20),
     TextColor = Color3.fromRGB(255, 255, 255)
@@ -116,6 +116,7 @@ function Borealis.new(title)
         ZIndex = 2
     })
     
+    -- // UNLOAD FUNCTION (ANIMATED Tried My Best!) //
     function Library:Unload()
         local closeTween = TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 0, 0, 0),
@@ -231,13 +232,14 @@ function Borealis.new(title)
             AutoButtonColor = false
         })
         
+        -- // TAB LINE ANIMATION INDICATOR May Not Be Smooth //
         local Indicator = Create("Frame", {
             Parent = TabBtn,
             BackgroundColor3 = Theme.Accent,
             BorderSizePixel = 0,
             AnchorPoint = Vector2.new(0, 0.5),
             Position = UDim2.new(0, 0, 0.5, 0),
-            Size = UDim2.new(0, 3, 0, 0),
+            Size = UDim2.new(0, 3, 0, 0), -- Start Invisible
             Visible = true
         })
 
@@ -252,6 +254,7 @@ function Borealis.new(title)
             CanvasSize = UDim2.new(0, 0, 0, 0) 
         })
         
+        -- [!] THIS SECTION ADDS THE SPACE AROUND THE BUTTONS DONT TOUCH [!]
         Create("UIPadding", {
             Parent = Page,
             PaddingTop = UDim.new(0, 12),
@@ -260,10 +263,11 @@ function Borealis.new(title)
             PaddingBottom = UDim.new(0, 12)
         })
 
+        -- [!] THIS SECTION ADDS THE SPACE BETWEEN BUTTONS SAME THING [!]
         local PageLayout = Create("UIListLayout", {
             Parent = Page,
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 12)
+            Padding = UDim.new(0, 12) -- Gap between items
         })
         
         PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -276,6 +280,7 @@ function Borealis.new(title)
             for _, t in pairs(Tabs) do
                 if t.Page.Visible then
                     TweenService:Create(t.Btn, TweenInfo_Hover, {TextColor3 = Color3.fromRGB(150, 150, 150)}):Play()
+                    -- Shrink line out
                     TweenService:Create(t.Ind, TweenInfo_Line, {Size = UDim2.new(0, 3, 0, 0)}):Play()
                     
                     task.spawn(function()
@@ -296,6 +301,7 @@ function Borealis.new(title)
             CurrentTab = Page
             Page.Visible = true
             
+            -- Grow line in Why'd i Add These -- Comments
             TweenService:Create(Indicator, TweenInfo_Line, {Size = UDim2.new(0, 3, 1, 0)}):Play()
             
             Page.Position = UDim2.new(0, 0, 0, 15)
@@ -338,7 +344,7 @@ function Borealis.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36)
+                Size = UDim2.new(1, 0, 0, 36) -- Width handled by UIPadding Dont Mind My Commentary
             })
             Create("UICorner", {Parent = ToggleBox, CornerRadius = UDim.new(0, 4)})
             
@@ -385,7 +391,7 @@ function Borealis.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36),
+                Size = UDim2.new(1, 0, 0, 36), -- Width handled by UIPaddinG
                 Font = Enum.Font.Gotham,
                 Text = props.Name,
                 TextColor3 = Theme.TextColor,
@@ -413,7 +419,7 @@ function Borealis.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 50)
+                Size = UDim2.new(1, 0, 0, 50) -- Width handled by UIPadding
             })
             Create("UICorner", {Parent = SliderBox, CornerRadius = UDim.new(0, 4)})
             
@@ -497,7 +503,7 @@ function Borealis.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36),
+                Size = UDim2.new(1, 0, 0, 36), -- Width handled by UIPadding
                 ClipsDescendants = true
             })
             Create("UICorner", {Parent = Dropdown, CornerRadius = UDim.new(0, 4)})
@@ -544,6 +550,7 @@ function Borealis.new(title)
                 ScrollBarImageColor3 = Theme.Accent
             })
             
+            -- PADDING FOR DROPDOWN LIST TOO
             local ItemLayout = Create("UIListLayout", {
                 Parent = ItemHolder,
                 SortOrder = Enum.SortOrder.LayoutOrder,
@@ -603,7 +610,7 @@ function Borealis.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36)
+                Size = UDim2.new(1, 0, 0, 36) -- Width handled by UIPadding
             })
             Create("UICorner", {Parent = BindFrame, CornerRadius = UDim.new(0, 4)})
 
@@ -645,23 +652,19 @@ function Borealis.new(title)
                 
                 local conn
                 conn = UserInputService.InputBegan:Connect(function(input)
-                    -- FIXED: Only accept actual Keyboard inputs to prevent mouse clicks breaking it
                     if input.UserInputType == Enum.UserInputType.Keyboard then
                         currentKey = input.KeyCode
                         BindBtn.Text = currentKey.Name
                         TweenService:Create(BindBtn, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(200, 200, 200)}):Play()
                         listening = false
-                        if conn then conn:Disconnect() end
+                        conn:Disconnect()
                     end
                 end)
             end)
 
             UserInputService.InputBegan:Connect(function(input, gp)
-                -- FIXED: Added UserInputType check to prevent errors from Enum.KeyCode.Unknown
-                if not gp and input.UserInputType == Enum.UserInputType.Keyboard then
-                    if currentKey and input.KeyCode == currentKey then
-                        if onActivate then onActivate() end
-                    end
+                if not gp and input.KeyCode == currentKey then
+                    if onActivate then onActivate() end
                 end
             end)
         end
