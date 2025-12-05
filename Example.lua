@@ -1,5 +1,5 @@
 -- Load Library
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/RyusaiSH/refs/heads/main/RyusaiOfficialSH"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/RyusaiSH/refs/heads/main/BorealisOfficialSH"))()
 local Window = Library.new("Tutorial Script")
 
 -- Services
