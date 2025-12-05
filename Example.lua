@@ -1,19 +1,31 @@
--- Load Library
+print([[
+ ____                       _ _       _     _ _                          
+| __ )  ___  _ __ ___  __ _| (_)___  | |   (_) |__  _ __ __ _ _ __ _   _ 
+|  _ \ / _ \| '__/ _ \/ _` | | / __| | |   | | '_ \| '__/ _` | '__| | | |
+| |_) | (_) | | |  __/ (_| | | \__ \ | |___| | |_) | | | (_| | |  | |_| |
+|____/ \___/|_|  \___|\__,_|_|_|___/ |_____|_|_.__/|_|  \__,_|_|   \__, |
+                                                                   |___/ 
+]])
+print("Loading Borealis Library...")
+
+-- 1. Load Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/RyusaiSH/refs/heads/main/BorealisOfficialSH"))()
+
+-- 2. Create Window
 local Window = Library.new("Tutorial Script")
 
--- Services
+-- 3. Services & Variables
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Config to store values
+-- 4. Configuration Table
 local Config = {
     SpeedEnabled = false,
     Speed = 16,
     FlyEnabled = false
 }
 
--- Helper functions
+-- 5. Helper Functions
 local function GetChar()
     return LocalPlayer.Character
 end
@@ -23,11 +35,11 @@ local function GetHumanoid()
     return char and char:FindFirstChildOfClass("Humanoid")
 end
 
--- Create Main Tab
+-- 6. Main Tab
 local MainTab = Window:MakeTab("Main")
 local MainSection = MainTab:AddSection()
 
--- Button Example
+-- Button
 MainSection:AddButton({
     Name = "Print Message",
     Callback = function()
@@ -36,17 +48,23 @@ MainSection:AddButton({
     end
 })
 
--- Toggle Example
+-- Toggle
 MainSection:AddToggle({
     Name = "Speed Boost",
     Default = false,
     Callback = function(Value)
         Config.SpeedEnabled = Value
         print("Speed toggle:", Value)
+        
+        -- Reset speed if disabled
+        if not Value then
+            local hum = GetHumanoid()
+            if hum then hum.WalkSpeed = 16 end
+        end
     end
 })
 
--- Slider Example
+-- Slider
 MainSection:AddSlider({
     Name = "Walk Speed",
     Min = 16,
@@ -58,7 +76,7 @@ MainSection:AddSlider({
     end
 })
 
--- Dropdown Example
+-- Dropdown
 MainSection:AddDropdown({
     Name = "Select Option",
     Default = "Option 1",
@@ -68,13 +86,13 @@ MainSection:AddDropdown({
     end
 })
 
--- Keybind Example
+-- Keybind
 MainSection:AddKeybind("Toggle UI", Enum.KeyCode.Insert, function()
     print("Insert pressed!")
     Window:toggle()
 end)
 
--- Tutorial Tab
+-- 7. Tutorial Tab
 local TutorialTab = Window:MakeTab("Tutorial")
 local TutorialSection = TutorialTab:AddSection()
 
@@ -84,7 +102,6 @@ TutorialSection:AddButton({
         print("=== TOGGLE TUTORIAL ===")
         print("Toggles turn features ON/OFF")
         print("Value = true when ON, false when OFF")
-        print("Use: if Config.SpeedEnabled then ... end")
     end
 })
 
@@ -94,7 +111,6 @@ TutorialSection:AddButton({
         print("=== LOOP TUTORIAL ===")
         print("Use task.spawn for background loops")
         print("while task.wait() do ... end runs forever")
-        print("Check Config values inside loops")
     end
 })
 
@@ -108,15 +124,15 @@ TutorialSection:AddButton({
     end
 })
 
--- Main Loop (applies the configs)
+-- 8. Main Logic Loop
 task.spawn(function()
     while task.wait() do
         local humanoid = GetHumanoid()
         if humanoid and Config.SpeedEnabled then
+            -- Only apply speed if the humanoid exists and toggle is ON
             humanoid.WalkSpeed = Config.Speed
         end
     end
 end)
 
-print("SUM")
-print("SUM")
+print("Script Loaded Successfully")
