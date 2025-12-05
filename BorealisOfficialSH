@@ -2,6 +2,7 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
+local TextService = game:GetService("TextService")
 
 local Borealis = {}
 local UIConfig = { Keybind = Enum.KeyCode.RightControl }
@@ -15,7 +16,7 @@ local TweenInfo_Line = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDire
 local Theme = {
     Background = Color3.fromRGB(24, 24, 24),
     Glow = Color3.fromRGB(0, 0, 0),
-    Accent = Color3.fromRGB(60, 180, 255), -- Changed to Light Blue
+    Accent = Color3.fromRGB(60, 180, 255),
     LightContrast = Color3.fromRGB(30, 30, 30),
     DarkContrast = Color3.fromRGB(20, 20, 20),
     TextColor = Color3.fromRGB(255, 255, 255)
@@ -73,6 +74,83 @@ function Borealis.new(title)
         ResetOnSpawn = false
     })
     
+    -- // NOTIFICATION SYSTEM //
+    local NotificationHolder = Create("Frame", {
+        Name = "Notifications",
+        Parent = ScreenGui,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(1, -320, 1, -20), -- Bottom Right
+        Size = UDim2.new(0, 300, 1, 0),
+        AnchorPoint = Vector2.new(0, 1)
+    })
+    
+    local NotifLayout = Create("UIListLayout", {
+        Parent = NotificationHolder,
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Padding = UDim.new(0, 5),
+        VerticalAlignment = Enum.VerticalAlignment.Bottom
+    })
+
+    function Library:Notification(props)
+        local Title = props.Title or "Notification"
+        local Content = props.Content or "Text"
+        local Duration = props.Duration or 3
+        
+        local NotifFrame = Create("Frame", {
+            Parent = NotificationHolder,
+            BackgroundColor3 = Theme.LightContrast,
+            BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 0, 0), -- Animated height
+            ClipsDescendants = true
+        })
+        Create("UICorner", {Parent = NotifFrame, CornerRadius = UDim.new(0, 6)})
+        
+        local Glow = Create("Frame", {
+            Parent = NotifFrame,
+            BackgroundColor3 = Theme.Accent,
+            BorderSizePixel = 0,
+            Size = UDim2.new(0, 4, 1, 0)
+        })
+
+        local TitleLabel = Create("TextLabel", {
+            Parent = NotifFrame,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 14, 0, 5),
+            Size = UDim2.new(1, -20, 0, 20),
+            Font = Enum.Font.GothamBold,
+            Text = Title,
+            TextColor3 = Theme.TextColor,
+            TextSize = 14,
+            TextXAlignment = Enum.TextXAlignment.Left
+        })
+
+        local ContentLabel = Create("TextLabel", {
+            Parent = NotifFrame,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 14, 0, 25),
+            Size = UDim2.new(1, -20, 0, 30),
+            Font = Enum.Font.Gotham,
+            Text = Content,
+            TextColor3 = Color3.fromRGB(200, 200, 200),
+            TextSize = 13,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextWrapped = true
+        })
+        
+        -- Animation In
+        local targetSize = UDim2.new(1, 0, 0, 60)
+        local openTween = TweenService:Create(NotifFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = targetSize})
+        openTween:Play()
+        
+        task.spawn(function()
+            task.wait(Duration)
+            local closeTween = TweenService:Create(NotifFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(1, 0, 0, 0)})
+            closeTween:Play()
+            closeTween.Completed:Wait()
+            NotifFrame:Destroy()
+        end)
+    end
+    
     local Main = Create("Frame", {
         Name = "Main",
         Parent = ScreenGui,
@@ -83,12 +161,23 @@ function Borealis.new(title)
         ClipsDescendants = true
     })
     
+    Create("UICorner", {Parent = Main, CornerRadius = UDim.new(0, 6)})
+    
     local TopBar = Create("Frame", {
         Name = "TopBar",
         Parent = Main,
         BackgroundColor3 = Theme.LightContrast,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 40)
+    })
+    Create("UICorner", {Parent = TopBar, CornerRadius = UDim.new(0, 6)})
+    -- Fix corner clipping at bottom of topbar
+    local TopBarFiller = Create("Frame", {
+        Parent = TopBar,
+        BackgroundColor3 = Theme.LightContrast,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0,0,1,-5),
+        Size = UDim2.new(1,0,0,5)
     })
     
     Create("TextLabel", {
@@ -116,7 +205,6 @@ function Borealis.new(title)
         ZIndex = 2
     })
     
-    -- // UNLOAD FUNCTION (ANIMATED Tried My Best!) //
     function Library:Unload()
         local closeTween = TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 0, 0, 0),
@@ -186,14 +274,13 @@ function Borealis.new(title)
         Size = UDim2.new(0, 130, 1, -40)
     })
     
-    -- // EDITED: Added ScrollingEnabled = false //
     local TabContainer = Create("ScrollingFrame", {
         Parent = Sidebar,
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, -10),
         Position = UDim2.new(0, 0, 0, 10),
         ScrollBarThickness = 0,
-        ScrollingEnabled = false -- THIS DISABLES THE SLIDING
+        ScrollingEnabled = false 
     })
     
     local TabLayout = Create("UIListLayout", {
@@ -234,14 +321,13 @@ function Borealis.new(title)
             AutoButtonColor = false
         })
         
-        -- // TAB LINE ANIMATION INDICATOR May Not Be Smooth //
         local Indicator = Create("Frame", {
             Parent = TabBtn,
             BackgroundColor3 = Theme.Accent,
             BorderSizePixel = 0,
             AnchorPoint = Vector2.new(0, 0.5),
             Position = UDim2.new(0, 0, 0.5, 0),
-            Size = UDim2.new(0, 3, 0, 0), -- Start Invisible
+            Size = UDim2.new(0, 3, 0, 0), 
             Visible = true
         })
 
@@ -250,13 +336,12 @@ function Borealis.new(title)
             Parent = Pages,
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 1, 0),
-            ScrollBarThickness = 0,
-            ScrollBarImageColor3 = Theme.LightContrast,
+            ScrollBarThickness = 2,
+            ScrollBarImageColor3 = Theme.Accent,
             Visible = false,
             CanvasSize = UDim2.new(0, 0, 0, 0) 
         })
         
-        -- [!] THIS SECTION ADDS THE SPACE AROUND THE BUTTONS DONT TOUCH [!]
         Create("UIPadding", {
             Parent = Page,
             PaddingTop = UDim.new(0, 12),
@@ -265,11 +350,10 @@ function Borealis.new(title)
             PaddingBottom = UDim.new(0, 12)
         })
 
-        -- [!] THIS SECTION ADDS THE SPACE BETWEEN BUTTONS SAME THING [!]
         local PageLayout = Create("UIListLayout", {
             Parent = Page,
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 12) -- Gap between items
+            Padding = UDim.new(0, 12) 
         })
         
         PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -282,49 +366,24 @@ function Borealis.new(title)
             for _, t in pairs(Tabs) do
                 if t.Page.Visible then
                     TweenService:Create(t.Btn, TweenInfo_Hover, {TextColor3 = Color3.fromRGB(150, 150, 150)}):Play()
-                    -- Shrink line out
                     TweenService:Create(t.Ind, TweenInfo_Line, {Size = UDim2.new(0, 3, 0, 0)}):Play()
-                    
-                    task.spawn(function()
-                        local oldPage = t.Page
-                        for _, child in pairs(oldPage:GetDescendants()) do
-                            if child:IsA("GuiObject") then
-                                TweenService:Create(child, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
-                            end
-                            if child:IsA("TextLabel") or child:IsA("TextButton") then
-                                TweenService:Create(child, TweenInfo.new(0.2), {TextTransparency = 1}):Play()
-                            end
-                        end
-                        oldPage.Visible = false
-                    end)
+                    t.Page.Visible = false
                 end
             end
             
             CurrentTab = Page
             Page.Visible = true
             
-            -- Grow line in Why'd i Add These -- Comments
             TweenService:Create(Indicator, TweenInfo_Line, {Size = UDim2.new(0, 3, 1, 0)}):Play()
-            
-            Page.Position = UDim2.new(0, 0, 0, 15)
-            for _, child in pairs(Page:GetChildren()) do
-                if child:IsA("GuiObject") then child.BackgroundTransparency = 1 end
-                if child:IsA("TextLabel") or child:IsA("TextButton") then child.TextTransparency = 1 end
-            end
-
-            TweenService:Create(Page, TweenInfo_Tab, {Position = UDim2.new(0,0,0,0)}):Play()
             TweenService:Create(TabBtn, TweenInfo_Hover, {TextColor3 = Theme.TextColor}):Play()
             
-            for _, child in pairs(Page:GetDescendants()) do
-               if child:IsA("TextLabel") or child:IsA("TextButton") then
-                   TweenService:Create(child, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
-               elseif child:IsA("Frame") and child.Name ~= "Shadow" then
-                   TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = (child == SlideTrack and 1 or (child.Name == "ToggleBox" and 0 or Theme.LightContrast == child.BackgroundColor3 and 0 or 0))}):Play()
-                   child.Visible = true
-               end
-               if child:IsA("GuiObject") and child:FindFirstChild("UICorner") then
-                   TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
-               end
+            -- Simple Fade In
+            Page.CanvasPosition = Vector2.new(0,0)
+            for _, child in pairs(Page:GetChildren()) do
+                if child:IsA("GuiObject") then
+                    child.BackgroundTransparency = 1
+                    TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = (child.Name == "ToggleBox" or child.Name:find("Box") or child.Name:find("Button")) and 0 or 1}):Play()
+                end
             end
         end)
         
@@ -341,12 +400,14 @@ function Borealis.new(title)
         local Section = {}
         function Section:AddSection() return Section end
         
+        -- [[ TOGGLE ]]
         function Section:AddToggle(props)
             local ToggleBox = Create("Frame", {
+                Name = "ToggleBox",
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36) -- Width handled by UIPadding Dont Mind My Commentary
+                Size = UDim2.new(1, 0, 0, 36)
             })
             Create("UICorner", {Parent = ToggleBox, CornerRadius = UDim.new(0, 4)})
             
@@ -388,12 +449,13 @@ function Borealis.new(title)
             end)
         end
         
+        -- [[ BUTTON ]]
         function Section:AddButton(props)
             local Button = Create("TextButton", {
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36), -- Width handled by UIPaddinG
+                Size = UDim2.new(1, 0, 0, 36),
                 Font = Enum.Font.Gotham,
                 Text = props.Name,
                 TextColor3 = Theme.TextColor,
@@ -416,12 +478,14 @@ function Borealis.new(title)
             end)
         end
         
+        -- [[ SLIDER ]]
         function Section:AddSlider(props)
             local SliderBox = Create("Frame", {
+                Name = "SliderBox",
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 50) -- Width handled by UIPadding
+                Size = UDim2.new(1, 0, 0, 50)
             })
             Create("UICorner", {Parent = SliderBox, CornerRadius = UDim.new(0, 4)})
             
@@ -500,12 +564,14 @@ function Borealis.new(title)
             end)
         end
 
+        -- [[ DROPDOWN ]]
         function Section:AddDropdown(props)
             local Dropdown = Create("Frame", {
+                Name = "Dropdown",
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36), -- Width handled by UIPadding
+                Size = UDim2.new(1, 0, 0, 36),
                 ClipsDescendants = true
             })
             Create("UICorner", {Parent = Dropdown, CornerRadius = UDim.new(0, 4)})
@@ -548,11 +614,10 @@ function Borealis.new(title)
                 Position = UDim2.new(0, 0, 0, 36),
                 Size = UDim2.new(1, 0, 0, 100),
                 CanvasSize = UDim2.new(0,0,0,0),
-                ScrollBarThickness = 0,
+                ScrollBarThickness = 2,
                 ScrollBarImageColor3 = Theme.Accent
             })
             
-            -- PADDING FOR DROPDOWN LIST TOO
             local ItemLayout = Create("UIListLayout", {
                 Parent = ItemHolder,
                 SortOrder = Enum.SortOrder.LayoutOrder,
@@ -568,7 +633,9 @@ function Borealis.new(title)
             OpenBtn.MouseButton1Click:Connect(function()
                 Open = not Open
                 if Open then
-                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 136)}):Play()
+                    local count = #props.Items
+                    local h = math.clamp(count * 28 + 10, 0, 140)
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 36 + h)}):Play()
                     TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = 180}):Play()
                 else
                     TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 36)}):Play()
@@ -607,12 +674,251 @@ function Borealis.new(title)
             end
         end
 
+        -- [[ MULTI DROPDOWN ]]
+        function Section:AddMultiDropdown(props)
+            local Dropdown = Create("Frame", {
+                Name = "MultiDropdown",
+                Parent = Page,
+                BackgroundColor3 = Theme.LightContrast,
+                BorderSizePixel = 0,
+                Size = UDim2.new(1, 0, 0, 36),
+                ClipsDescendants = true
+            })
+            Create("UICorner", {Parent = Dropdown, CornerRadius = UDim.new(0, 4)})
+
+            local SelectedItems = {}
+            local function UpdateText()
+                if #SelectedItems == 0 then
+                    return props.Name .. ": None"
+                elseif #SelectedItems == 1 then
+                     return props.Name .. ": " .. SelectedItems[1]
+                else
+                    return props.Name .. ": " .. #SelectedItems .. " Selected"
+                end
+            end
+
+            local Text = Create("TextLabel", {
+                Parent = Dropdown,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 10, 0, 0),
+                Size = UDim2.new(1, -40, 0, 36),
+                Font = Enum.Font.Gotham,
+                Text = UpdateText(),
+                TextColor3 = Theme.TextColor,
+                TextSize = 13,
+                TextXAlignment = Enum.TextXAlignment.Left
+            })
+
+            local OpenBtn = Create("TextButton", {
+                Parent = Dropdown,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 0, 36),
+                Text = "",
+                ZIndex = 2
+            })
+            AddRipple(OpenBtn)
+            
+            local Arrow = Create("TextLabel", {
+                Parent = Dropdown,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(1, -30, 0, 0),
+                Size = UDim2.new(0, 30, 0, 36),
+                Font = Enum.Font.GothamBold,
+                Text = "V",
+                TextColor3 = Color3.fromRGB(150, 150, 150),
+                TextSize = 12
+            })
+
+            local ItemHolder = Create("ScrollingFrame", {
+                Parent = Dropdown,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 0, 0, 36),
+                Size = UDim2.new(1, 0, 0, 100),
+                CanvasSize = UDim2.new(0,0,0,0),
+                ScrollBarThickness = 2,
+                ScrollBarImageColor3 = Theme.Accent
+            })
+            
+            local ItemLayout = Create("UIListLayout", {
+                Parent = ItemHolder,
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 4) 
+            })
+            
+            ItemLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                ItemHolder.CanvasSize = UDim2.new(0,0,0, ItemLayout.AbsoluteContentSize.Y)
+            end)
+
+            local Open = false
+            OpenBtn.MouseButton1Click:Connect(function()
+                Open = not Open
+                if Open then
+                    local count = #props.Items
+                    local h = math.clamp(count * 28 + 10, 0, 140)
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 36 + h)}):Play()
+                    TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = 180}):Play()
+                else
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 36)}):Play()
+                    TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = 0}):Play()
+                end
+            end)
+
+            for _, item in pairs(props.Items or {}) do
+                local ItemBtn = Create("TextButton", {
+                    Parent = ItemHolder,
+                    BackgroundColor3 = Theme.DarkContrast,
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, -4, 0, 24),
+                    Font = Enum.Font.Gotham,
+                    Text = item,
+                    TextColor3 = Color3.fromRGB(200, 200, 200),
+                    TextSize = 12,
+                    AutoButtonColor = false
+                })
+                Create("UICorner", {Parent = ItemBtn, CornerRadius = UDim.new(0, 4)})
+                
+                ItemBtn.MouseButton1Click:Connect(function()
+                    if table.find(SelectedItems, item) then
+                        table.remove(SelectedItems, table.find(SelectedItems, item))
+                        TweenService:Create(ItemBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.DarkContrast, TextColor3 = Color3.fromRGB(200,200,200)}):Play()
+                    else
+                        table.insert(SelectedItems, item)
+                        TweenService:Create(ItemBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, TextColor3 = Color3.new(1,1,1)}):Play()
+                    end
+                    Text.Text = UpdateText()
+                    if props.Callback then props.Callback(SelectedItems) end
+                end)
+            end
+        end
+
+        -- [[ COLOR PICKER ]]
+        function Section:AddColorPicker(props)
+            local ColorFrame = Create("Frame", {
+                Name = "ColorPicker",
+                Parent = Page,
+                BackgroundColor3 = Theme.LightContrast,
+                BorderSizePixel = 0,
+                Size = UDim2.new(1, 0, 0, 36),
+                ClipsDescendants = true
+            })
+            Create("UICorner", {Parent = ColorFrame, CornerRadius = UDim.new(0, 4)})
+
+            Create("TextLabel", {
+                Parent = ColorFrame,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 10, 0, 0),
+                Size = UDim2.new(1, -50, 0, 36),
+                Font = Enum.Font.Gotham,
+                Text = props.Name,
+                TextColor3 = Theme.TextColor,
+                TextSize = 13,
+                TextXAlignment = Enum.TextXAlignment.Left
+            })
+            
+            local CurrentColor = props.Default or Color3.fromRGB(255, 255, 255)
+            
+            local ColorPreview = Create("TextButton", {
+                Parent = ColorFrame,
+                BackgroundColor3 = CurrentColor,
+                BorderSizePixel = 0,
+                Position = UDim2.new(1, -40, 0, 6),
+                Size = UDim2.new(0, 30, 0, 24),
+                Text = "",
+                AutoButtonColor = false
+            })
+            Create("UICorner", {Parent = ColorPreview, CornerRadius = UDim.new(0, 4)})
+            
+            local PickerArea = Create("Frame", {
+                Parent = ColorFrame,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 0, 0, 36),
+                Size = UDim2.new(1, 0, 0, 100)
+            })
+            
+            local HueSat = Create("ImageButton", {
+                Parent = PickerArea,
+                Image = "rbxassetid://4155801252",
+                Position = UDim2.new(0, 10, 0, 10),
+                Size = UDim2.new(0, 100, 0, 80),
+                BackgroundColor3 = Color3.new(1,1,1),
+                BorderSizePixel = 0,
+                AutoButtonColor = false
+            })
+            
+            local Val = Create("ImageButton", {
+                Parent = PickerArea,
+                BackgroundColor3 = Color3.new(1,1,1),
+                Position = UDim2.new(0, 120, 0, 10),
+                Size = UDim2.new(0, 20, 0, 80),
+                BorderSizePixel = 0,
+                AutoButtonColor = false
+            })
+            local ValGrad = Create("UIGradient", {
+                Parent = Val,
+                Rotation = 90,
+                Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.new(1,1,1)),
+                    ColorSequenceKeypoint.new(1, Color3.new(0,0,0))
+                })
+            })
+
+            local Open = false
+            ColorPreview.MouseButton1Click:Connect(function()
+                Open = not Open
+                TweenService:Create(ColorFrame, TweenInfo.new(0.4), {Size = Open and UDim2.new(1,0,0,146) or UDim2.new(1,0,0,36)}):Play()
+            end)
+            
+            local h, s, v = Color3.toHSV(CurrentColor)
+            
+            local function Update()
+                local newColor = Color3.fromHSV(h, s, v)
+                ColorPreview.BackgroundColor3 = newColor
+                ValGrad.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.fromHSV(h, s, 1)),
+                    ColorSequenceKeypoint.new(1, Color3.new(0,0,0))
+                })
+                if props.Callback then props.Callback(newColor) end
+            end
+            
+            local DraggingHue, DraggingVal = false, false
+            
+            HueSat.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then DraggingHue = true end
+            end)
+            Val.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then DraggingVal = true end
+            end)
+            UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+                    DraggingHue = false 
+                    DraggingVal = false 
+                end
+            end)
+            
+            UserInputService.InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement then
+                    if DraggingHue then
+                        local relX = math.clamp((input.Position.X - HueSat.AbsolutePosition.X) / HueSat.AbsoluteSize.X, 0, 1)
+                        local relY = math.clamp((input.Position.Y - HueSat.AbsolutePosition.Y) / HueSat.AbsoluteSize.Y, 0, 1)
+                        h = 1 - relX
+                        s = 1 - relY
+                        Update()
+                    elseif DraggingVal then
+                        local relY = math.clamp((input.Position.Y - Val.AbsolutePosition.Y) / Val.AbsoluteSize.Y, 0, 1)
+                        v = 1 - relY
+                        Update()
+                    end
+                end
+            end)
+        end
+
+        -- [[ KEYBIND ]]
         function Section:AddKeybind(name, defaultKey, onActivate)
             local BindFrame = Create("Frame", {
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36) -- Width handled by UIPadding
+                Size = UDim2.new(1, 0, 0, 36)
             })
             Create("UICorner", {Parent = BindFrame, CornerRadius = UDim.new(0, 4)})
 
