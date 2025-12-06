@@ -10,7 +10,6 @@ local Mouse = LocalPlayer:GetMouse()
 local Borealis = {}
 local UIConfig = { Keybind = Enum.KeyCode.RightControl }
 
--- Animation Config
 local TweenInfo_Hover = TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 local TweenInfo_Click = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local TweenInfo_Tab = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
@@ -99,7 +98,6 @@ function Borealis.new(title)
 	
 	Create("UICorner", {Parent = TopBar, CornerRadius = UDim.new(0, 6)})
 	
-	-- Fix corners for top bar so it doesn't look round on bottom
 	local TopBarCover = Create("Frame", {
 		Parent = TopBar,
 		BackgroundColor3 = Theme.LightContrast,
@@ -203,7 +201,7 @@ function Borealis.new(title)
 	})
 	
 	Create("UICorner", {Parent = Sidebar, CornerRadius = UDim.new(0, 6)})
-	local SidebarCover = Create("Frame", { -- Cover corner for seamless look
+	local SidebarCover = Create("Frame", {
 		Parent = Sidebar,
 		BackgroundColor3 = Theme.LightContrast,
 		BorderSizePixel = 0,
@@ -311,7 +309,7 @@ function Borealis.new(title)
 							if child:IsA("GuiObject") then
 								TweenService:Create(child, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
 							end
-							if child:IsA("TextLabel") or child:IsA("TextButton") then
+							if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
 								TweenService:Create(child, TweenInfo.new(0.2), {TextTransparency = 1}):Play()
 							end
 						end
@@ -328,17 +326,16 @@ function Borealis.new(title)
 			Page.Position = UDim2.new(0, 0, 0, 15)
 			for _, child in pairs(Page:GetChildren()) do
 				if child:IsA("GuiObject") then child.BackgroundTransparency = 1 end
-				if child:IsA("TextLabel") or child:IsA("TextButton") then child.TextTransparency = 1 end
+				if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then child.TextTransparency = 1 end
 			end
 
 			TweenService:Create(Page, TweenInfo_Tab, {Position = UDim2.new(0,0,0,0)}):Play()
 			TweenService:Create(TabBtn, TweenInfo_Hover, {TextColor3 = Theme.TextColor}):Play()
 
 			for _, child in pairs(Page:GetDescendants()) do
-				if child:IsA("TextLabel") or child:IsA("TextButton") then
+				if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
 					TweenService:Create(child, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 				elseif child:IsA("Frame") and child.Name ~= "Shadow" then
-					-- Specific logic to keep background valid for certain elements
 					local targetTransparency = 0
 					if child.Name == "Ripple" then targetTransparency = 1 end
 					if child.BackgroundColor3 == Theme.LightContrast or child.BackgroundColor3 == Theme.DarkContrast or child.BackgroundColor3 == Theme.Accent then
@@ -385,6 +382,57 @@ function Borealis.new(title)
 				TextSize = 13,
 				TextXAlignment = Enum.TextXAlignment.Left
 			})
+		end
+
+		function Section:AddTextbox(props)
+			local TextboxFrame = Create("Frame", {
+				Parent = Page,
+				BackgroundColor3 = Theme.LightContrast,
+				BorderSizePixel = 0,
+				Size = UDim2.new(1, 0, 0, 36)
+			})
+			Create("UICorner", {Parent = TextboxFrame, CornerRadius = UDim.new(0, 4)})
+	
+			Create("TextLabel", {
+				Parent = TextboxFrame,
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 10, 0, 0),
+				Size = UDim2.new(1, -160, 1, 0),
+				Font = Enum.Font.Gotham,
+				Text = props.Name,
+				TextColor3 = Theme.TextColor,
+				TextSize = 13,
+				TextXAlignment = Enum.TextXAlignment.Left
+			})
+	
+			local InputBox = Create("TextBox", {
+				Parent = TextboxFrame,
+				BackgroundColor3 = Theme.DarkContrast,
+				BorderSizePixel = 0,
+				Position = UDim2.new(1, -150, 0.5, -12),
+				Size = UDim2.new(0, 140, 0, 24),
+				Font = Enum.Font.Gotham,
+				Text = props.Default or "",
+				TextColor3 = Color3.fromRGB(200, 200, 200),
+				TextSize = 12,
+				PlaceholderText = props.Placeholder or "Type here...",
+				ClearTextOnFocus = false
+			})
+			Create("UICorner", {Parent = InputBox, CornerRadius = UDim.new(0, 4)})
+	
+			InputBox.Focused:Connect(function()
+				TweenService:Create(InputBox, TweenInfo.new(0.2), {TextColor3 = Theme.Accent}):Play()
+			end)
+	
+			InputBox.FocusLost:Connect(function(enterPressed)
+				TweenService:Create(InputBox, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(200, 200, 200)}):Play()
+				if props.Callback then
+					props.Callback(InputBox.Text)
+				end
+				if props.ClearOnFocusLost then
+					InputBox.Text = ""
+				end
+			end)
 		end
 
 		function Section:AddToggle(props)
@@ -664,7 +712,6 @@ function Borealis.new(title)
 			local ColorInput = nil
 			local HueInput = nil
 			
-			-- Values for Rainbow
 			local RainbowColorValue = 0
 			local HueSelectionPosition = 0
 
@@ -706,7 +753,6 @@ function Borealis.new(title)
 			})
 			AddRipple(TriggerBtn)
 
-			-- Container for the actual picker
 			local PickerContainer = Create("Frame", {
 				Parent = Box,
 				BackgroundTransparency = 1,
@@ -718,7 +764,7 @@ function Borealis.new(title)
 				Parent = PickerContainer,
 				BackgroundColor3 = Color3.fromRGB(255, 0, 4),
 				BorderSizePixel = 0,
-				Size = UDim2.new(0, 200, 0, 100), -- Will resize dynamically based on UI width in real implementations, but here fixed approx
+				Size = UDim2.new(1, -40, 1, 0),
 				Image = "rbxassetid://4155801252"
 			})
 			Create("UICorner", {Parent = ColorSquare, CornerRadius = UDim.new(0, 4)})
@@ -729,7 +775,7 @@ function Borealis.new(title)
 				Size = UDim2.new(0, 18, 0, 18),
 				Image = "http://www.roblox.com/asset/?id=4805639000",
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.new(0,0,0,0) -- Start
+				Position = UDim2.new(0,0,0,0)
 			})
 
 			local HueStrip = Create("ImageLabel", {
@@ -759,17 +805,16 @@ function Borealis.new(title)
 				Parent = HueStrip,
 				BackgroundTransparency = 1,
 				Size = UDim2.new(1, 0, 0, 10),
-				Image = "rbxassetid://4805639000", -- Using similar ring cursor
+				Image = "rbxassetid://4805639000",
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.new(0.5, 0, 0, 0)
 			})
 			
-			-- Rainbow Toggle
 			local RainbowToggleBtn = Create("TextButton", {
 				Parent = PickerContainer,
 				BackgroundColor3 = Theme.DarkContrast,
 				BorderSizePixel = 0,
-				Position = UDim2.new(0, 210, 0, 0), -- Positioning between square and hue
+				Position = UDim2.new(0, 210, 0, 0),
 				Size = UDim2.new(0, 80, 0, 20),
 				Font = Enum.Font.Gotham,
 				Text = "Rainbow",
@@ -777,14 +822,7 @@ function Borealis.new(title)
 				TextSize = 11
 			})
 			Create("UICorner", {Parent = RainbowToggleBtn, CornerRadius = UDim.new(0,4)})
-
-			-- Layout logic to make sure ColorSquare takes remaining space
-			-- We have HueStrip (25px) + Padding (10px) = 35px from right
-			-- We put Rainbow button elsewhere or overlay? Let's put Rainbow button below Hue strip or make space.
-			-- Let's adjust sizes for Borealis compact layout
-			ColorSquare.Size = UDim2.new(1, -40, 1, 0)
 			
-			-- Logic from Flux
 			local function UpdateColorPicker(nope)
 				CurrentColorFrame.BackgroundColor3 = Color3.fromHSV(ColorH, ColorS, ColorV)
 				ColorSquare.BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1)
@@ -797,10 +835,8 @@ function Borealis.new(title)
 			
 			if props.Default then
 				ColorH, ColorS, ColorV = Color3.toHSV(props.Default)
-				ColorV = 1 - ColorV -- Flux logic inversion?
-				-- Standardizing HSV selection
+				ColorV = 1 - ColorV
 				ColorH, ColorS, ColorV = Color3.toHSV(props.Default)
-				-- Apply position updates
 				ColorSelection.Position = UDim2.new(ColorS, 0, 1 - ColorV, 0)
 				HueSelection.Position = UDim2.new(0.5, 0, 1 - ColorH, 0)
 				UpdateColorPicker()
@@ -866,7 +902,7 @@ function Borealis.new(title)
 						RainbowColorValue = RainbowColorValue + 1/255
 						if RainbowColorValue >= 1 then RainbowColorValue = 0 end
 						HueSelectionPosition = HueSelectionPosition + 1
-						if HueSelectionPosition == 80 then HueSelectionPosition = 0 end -- Flux logic
+						if HueSelectionPosition == 80 then HueSelectionPosition = 0 end
 						
 						CurrentColorFrame.BackgroundColor3 = Color3.fromHSV(RainbowColorValue, 1, 1)
 						ColorSquare.BackgroundColor3 = Color3.fromHSV(RainbowColorValue, 1, 1)
