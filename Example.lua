@@ -1,6 +1,6 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/RyusaiSH/refs/heads/main/BorealisOfficialSH"))()
 
-local Window = Library.new("Borealis Example 1")
+local Window = Library.new("This is a Window")
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -12,23 +12,28 @@ local Config = {
     Delay = 1
 }
 
-local MainTab = Window:MakeTab("Chat Spam")
+local MainTab = Window:MakeTab("This is a Tab")
 local MainSection = MainTab:AddSection()
 
-MainSection:AddLabel("Configuration")
+MainSection:AddLabel("This is a Label")
 
-MainSection:AddTextbox({
-    Name = "Spam Message",
-    Default = "Borealis on top!",
-    Placeholder = "Type here...",
-    ClearOnFocusLost = false,
-    Callback = function(Text)
-        Config.Message = Text
+MainSection:AddButton({
+    Name = "This is a Button",
+    Callback = function()
+        print("Button Clicked")
+    end
+})
+
+MainSection:AddToggle({
+    Name = "This is a Toggle",
+    Default = false,
+    Callback = function(Value)
+        Config.Spamming = Value
     end
 })
 
 MainSection:AddSlider({
-    Name = "Spam Delay",
+    Name = "This is a Slider",
     Min = 0,
     Max = 10,
     Default = 1,
@@ -37,33 +42,38 @@ MainSection:AddSlider({
     end
 })
 
-MainSection:AddLabel("Activation")
+MainSection:AddTextbox({
+    Name = "This is a Textbox",
+    Default = "Borealis on top!",
+    Placeholder = "Type here...",
+    ClearOnFocusLost = false,
+    Callback = function(Text)
+        Config.Message = Text
+    end
+})
 
-MainSection:AddToggle({
-    Name = "Enable Chat Spam",
-    Default = false,
+MainSection:AddDropdown({
+    Name = "This is a Dropdown",
+    Default = "Option 1",
+    Items = {"Option 1", "Option 2", "Option 3"},
     Callback = function(Value)
-        Config.Spamming = Value
+        print(Value)
     end
 })
 
 local ThemeTab = Window:MakeTab("UI Theme")
 local ThemeSection = ThemeTab:AddSection()
 
-ThemeSection:AddLabel("Customize UI")
-
 ThemeSection:AddColorPicker({
-    Name = "Accent Color",
+    Name = "This is a Color Picker",
     Default = Color3.fromRGB(60, 180, 255),
     Callback = function(Value)
-        
     end
 })
 
-ThemeSection:AddKeybind("Toggle UI", Enum.KeyCode.RightControl, function()
+ThemeSection:AddKeybind("This is a Keybind", Enum.KeyCode.RightControl, function()
     Window:toggle()
 end)
-
 
 task.spawn(function()
     while task.wait() do
