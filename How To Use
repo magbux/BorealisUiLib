@@ -1,0 +1,89 @@
+Yo Here's A Tutorial On
+How To Use Borealis UI Lib
+
+Make A Window
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/BorealisUiLib/refs/heads/main/BorealisOfficialUiLib"))()
+local Window = Library.new("My Window")
+
+Make A Tab
+
+local Tab = Window:MakeTab("Main")
+
+Make A Section
+
+local Section = Tab:AddSection()
+
+Label
+
+Section:AddLabel("This Is A Label")
+
+Button
+
+Section:AddButton({
+    Name = "This Is A Button",
+    Callback = function()
+        print("Button Clicked")
+    end
+})
+
+Toggle
+
+Section:AddToggle({
+    Name = "This Is A Toggle",
+    Default = false,
+    Callback = function(Value)
+        print(Value)
+    end
+})
+
+Slider
+
+Section:AddSlider({
+    Name = "This Is A Slider",
+    Min = 0,
+    Max = 100,
+    Default = 10,
+    Callback = function(Value)
+        print(Value)
+    end
+})
+
+Textbox
+
+Section:AddTextbox({
+    Name = "This Is A Textbox",
+    Default = "",
+    Placeholder = "Type Here...",
+    ClearOnFocusLost = false,
+    Callback = function(Text)
+        print(Text)
+    end
+})
+
+Dropdown
+
+Section:AddDropdown({
+    Name = "This Is A Dropdown",
+    Default = "Option 1",
+    Items = {"Option 1", "Option 2", "Option 3"},
+    Callback = function(Value)
+        print(Value)
+    end
+})
+
+Color Picker
+
+Section:AddColorPicker({
+    Name = "This Is A Color Picker",
+    Default = Color3.fromRGB(60, 180, 255),
+    Callback = function(Value)
+        print(Value)
+    end
+})
+
+Keybind
+
+Section:AddKeybind("This Is A Keybind", Enum.KeyCode.RightControl, function()
+    Window:toggle()
+end)
