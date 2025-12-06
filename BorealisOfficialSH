@@ -280,12 +280,11 @@ function Borealis.new(title)
 			Parent = Pages,
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, 0, 1, 0),
-			ScrollBarThickness = 2,
+			ScrollBarThickness = 0,
 			ScrollBarImageColor3 = Theme.Accent,
 			Visible = false,
 			CanvasSize = UDim2.new(0, 0, 0, 0) 
 		})
-		table.insert(ThemeObjects, function(c) Page.ScrollBarImageColor3 = c end)
 
 		Create("UIPadding", {
 			Parent = Page,
