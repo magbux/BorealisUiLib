@@ -127,12 +127,12 @@ function Borealis.new(title)
 		ZIndex = 2
 	})
 
-	local SearchBtn = Create("ImageButton", {
+local SearchBtn = Create("ImageButton", {
 		Parent = TopBar,
 		BackgroundTransparency = 1,
-		Position = UDim2.new(1, -65, 0, 5),
-		Size = UDim2.new(0, 30, 0, 30),
-		Image = "rbxassetid://6031154871",
+		Position = UDim2.new(1, -62, 0, 10), 
+		Size = UDim2.new(0, 20, 0, 20),      
+		Image = "rbxassetid://6031154871",   
 		ImageColor3 = Color3.fromRGB(150, 150, 150),
 		ZIndex = 2
 	})
