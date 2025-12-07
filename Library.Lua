@@ -132,7 +132,7 @@ function Borealis.new(title)
 		BackgroundTransparency = 1,
 		Position = UDim2.new(1, -65, 0, 5),
 		Size = UDim2.new(0, 30, 0, 30),
-		Image = "rbxassetid://3926305904",
+		Image = "rbxassetid://6031154871",
 		ImageColor3 = Color3.fromRGB(150, 150, 150),
 		ZIndex = 2
 	})
