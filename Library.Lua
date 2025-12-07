@@ -114,7 +114,7 @@ function Borealis.new(title)
 		Size = UDim2.new(1,0,0,5)
 	})
 
-	Create("TextLabel", {
+	local TitleLabel = Create("TextLabel", {
 		Parent = TopBar,
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 15, 0, 0),
@@ -125,6 +125,33 @@ function Borealis.new(title)
 		TextSize = 16,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		ZIndex = 2
+	})
+
+	local SearchBtn = Create("ImageButton", {
+		Parent = TopBar,
+		BackgroundTransparency = 1,
+		Position = UDim2.new(1, -65, 0, 5),
+		Size = UDim2.new(0, 30, 0, 30),
+		Image = "rbxassetid://3926305904",
+		ImageColor3 = Color3.fromRGB(150, 150, 150),
+		ZIndex = 2
+	})
+
+	local SearchBar = Create("TextBox", {
+		Parent = TopBar,
+		BackgroundTransparency = 1,
+		Position = UDim2.new(0, 15, 0, 0),
+		Size = UDim2.new(1, -100, 1, 0),
+		Font = Enum.Font.GothamBold,
+		Text = "",
+		TextColor3 = Theme.TextColor,
+		TextSize = 16,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		PlaceholderText = "Search...",
+		PlaceholderColor3 = Color3.fromRGB(150, 150, 150),
+		Visible = false,
+		ZIndex = 2,
+		ClearTextOnFocus = false
 	})
 
 	local CloseBtn = Create("TextButton", {
@@ -306,6 +333,10 @@ function Borealis.new(title)
 
 		TabBtn.MouseButton1Click:Connect(function()
 			if CurrentTab == Page then return end
+			
+			if SearchBar.Visible then
+				SearchBar.Text = ""
+			end
 
 			for _, t in pairs(Tabs) do
 				if t.Page.Visible then
@@ -1023,6 +1054,46 @@ function Borealis.new(title)
 
 		return Section
 	end
+
+	local SearchOpen = false
+	SearchBtn.MouseButton1Click:Connect(function()
+		SearchOpen = not SearchOpen
+		if SearchOpen then
+			TitleLabel.Visible = false
+			SearchBar.Visible = true
+			SearchBar:CaptureFocus()
+			TweenService:Create(SearchBtn, TweenInfo.new(0.2), {ImageColor3 = Theme.TextColor}):Play()
+		else
+			TitleLabel.Visible = true
+			SearchBar.Visible = false
+			SearchBar.Text = ""
+			TweenService:Create(SearchBtn, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(150, 150, 150)}):Play()
+			
+			if CurrentTab then
+				for _, v in pairs(CurrentTab:GetChildren()) do
+					if v:IsA("Frame") then v.Visible = true end
+				end
+			end
+		end
+	end)
+
+	SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
+		local input = SearchBar.Text:lower()
+		if CurrentTab then
+			for _, v in pairs(CurrentTab:GetChildren()) do
+				if v:IsA("Frame") then
+					local found = v:FindFirstChild("TextLabel")
+					if found then
+						if string.find(found.Text:lower(), input) then
+							v.Visible = true
+						else
+							v.Visible = false
+						end
+					end
+				end
+			end
+		end
+	end)
 
 	return Library
 end
