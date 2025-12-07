@@ -1,7 +1,7 @@
 Yo Here's A Tutorial On
 How To Use Borealis UI Lib
 
-Make A Window
+Make A Window But Add The Name Of The Tab Behind The Section like MainSection Movinf Forward. 
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/BorealisUiLib/refs/heads/main/BorealisOfficialUiLib"))()
 local Window = Library.new("My Window")
