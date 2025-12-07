@@ -1,26 +1,21 @@
-Yo Here's A Tutorial On
-How To Use Borealis UI Lib
-
-Make A Window But Add The Name Of The Tab Behind The Section like MainSection Movinf Forward. 
-
+Borealis UI Lib Tutorial
+-- Load The Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/BorealisUiLib/refs/heads/main/BorealisOfficialUiLib"))()
+
+-- Create A Window (Put The Tab Name Behind The Section Name)
 local Window = Library.new("My Window")
 
-Make A Tab
-
+-- Create A Tab
 local Tab = Window:MakeTab("Main")
 
-Make A Section
-
-local Section = Tab:AddSection()
+-- Create A Section
+local MainSection = Tab:AddSection()
 
 Label
-
-Section:AddLabel("This Is A Label")
+MainSection:AddLabel("This Is A Label")
 
 Button
-
-Section:AddButton({
+MainSection:AddButton({
     Name = "This Is A Button",
     Callback = function()
         print("Button Clicked")
@@ -28,8 +23,7 @@ Section:AddButton({
 })
 
 Toggle
-
-Section:AddToggle({
+MainSection:AddToggle({
     Name = "This Is A Toggle",
     Default = false,
     Callback = function(Value)
@@ -38,8 +32,7 @@ Section:AddToggle({
 })
 
 Slider
-
-Section:AddSlider({
+MainSection:AddSlider({
     Name = "This Is A Slider",
     Min = 0,
     Max = 100,
@@ -50,8 +43,7 @@ Section:AddSlider({
 })
 
 Textbox
-
-Section:AddTextbox({
+MainSection:AddTextbox({
     Name = "This Is A Textbox",
     Default = "",
     Placeholder = "Type Here...",
@@ -62,8 +54,7 @@ Section:AddTextbox({
 })
 
 Dropdown
-
-Section:AddDropdown({
+MainSection:AddDropdown({
     Name = "This Is A Dropdown",
     Default = "Option 1",
     Items = {"Option 1", "Option 2", "Option 3"},
@@ -73,8 +64,7 @@ Section:AddDropdown({
 })
 
 Color Picker
-
-Section:AddColorPicker({
+MainSection:AddColorPicker({
     Name = "This Is A Color Picker",
     Default = Color3.fromRGB(60, 180, 255),
     Callback = function(Value)
@@ -83,7 +73,6 @@ Section:AddColorPicker({
 })
 
 Keybind
-
-Section:AddKeybind("This Is A Keybind", Enum.KeyCode.RightControl, function()
+MainSection:AddKeybind("This Is A Keybind", Enum.KeyCode.RightControl, function()
     Window:toggle()
 end)
