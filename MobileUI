@@ -34,7 +34,7 @@ function Library:Window(title)
     ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     ToggleBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
     ToggleBtn.Size = UDim2.new(0, 45, 0, 45)
-    ToggleBtn.Image = "http://www.roblox.com/asset/?id=7803241868" -- Logo
+    ToggleBtn.Image = "http://www.roblox.com/asset/?id=79389695" -- Logo
     ToggleBtn.ImageColor3 = Color3.fromRGB(232, 17, 85)
     ToggleBtn.Active = true
     ToggleBtn.Draggable = true -- Native Roblox draggable works reasonably well for simple buttons on mobile
@@ -151,7 +151,7 @@ function Library:Window(title)
     Logo.BackgroundTransparency = 1
     Logo.Position = UDim2.new(0, 6, 0.5, -15)
     Logo.Size = UDim2.new(0, 26, 0, 30)
-    Logo.Image = "http://www.roblox.com/asset/?id=7803241868"
+    Logo.Image = "http://www.roblox.com/asset/?id=79389695"
     Logo.ImageColor3 = Color3.fromRGB(232, 17, 85)
 
     GameTitle.Parent = Top
@@ -168,7 +168,7 @@ function Library:Window(title)
     CloseBtn.BackgroundTransparency = 1
     CloseBtn.Position = UDim2.new(1, -26, 0.5, -10)
     CloseBtn.Size = UDim2.new(0, 20, 0, 20)
-    CloseBtn.Image = "http://www.roblox.com/asset/?id=7755372427"
+    CloseBtn.Image = "http://www.roblox.com/asset/?id=79389695"
     CloseBtn.ImageColor3 = Color3.fromRGB(150, 150, 150)
     
     CloseBtn.MouseButton1Click:Connect(function()
