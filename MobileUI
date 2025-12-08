@@ -1,8 +1,4 @@
---creds to mjcontega as he allowed me to recreate his ui lib for mobile--
--- Borealis Mobile Remake
--- Optimized for Touch & Mobile usage
-
-pcall(function()
+pcall(function()     --creds to mjcontega--
     game:GetService('CoreGui'):FindFirstChild('BorealisMobile'):Destroy()
 end)
 
@@ -16,7 +12,6 @@ local Mouse = Player:GetMouse()
 local Library = {}
 
 function Library:Window(title)
-    -- Main ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "BorealisMobile"
     ScreenGui.Parent = game:GetService("CoreGui")
@@ -24,7 +19,6 @@ function Library:Window(title)
     ScreenGui.ResetOnSpawn = false
     ScreenGui.IgnoreGuiInset = true
 
-    --// TOGGLE BUTTON (Floating Icon) //--
     local ToggleBtn = Instance.new("ImageButton")
     local ToggleCorner = Instance.new("UICorner")
     local ToggleStroke = Instance.new("UIStroke")
@@ -34,10 +28,10 @@ function Library:Window(title)
     ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     ToggleBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
     ToggleBtn.Size = UDim2.new(0, 45, 0, 45)
-    ToggleBtn.Image = "http://www.roblox.com/asset/?id=79389695" -- Logo
-    ToggleBtn.ImageColor3 = Color3.fromRGB(232, 17, 85)
+    ToggleBtn.Image = "rbxassetid://79389695"
+    ToggleBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
     ToggleBtn.Active = true
-    ToggleBtn.Draggable = true -- Native Roblox draggable works reasonably well for simple buttons on mobile
+    ToggleBtn.Draggable = true
 
     ToggleCorner.CornerRadius = UDim.new(1, 0)
     ToggleCorner.Parent = ToggleBtn
@@ -47,7 +41,6 @@ function Library:Window(title)
     ToggleStroke.Color = Color3.fromRGB(232, 17, 85)
     ToggleStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    --// MAIN FRAME //--
     local Main = Instance.new("Frame")
     local MainCorner = Instance.new("UICorner")
     local MainShadow = Instance.new("ImageLabel")
@@ -56,12 +49,11 @@ function Library:Window(title)
     Main.Parent = ScreenGui
     Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     Main.BorderSizePixel = 0
-    Main.Position = UDim2.new(0.5, -235, 0.5, -140) -- Centered
+    Main.Position = UDim2.new(0.5, -235, 0.5, -140)
     Main.Size = UDim2.new(0, 470, 0, 283)
-    Main.Visible = false -- Hidden by default
+    Main.Visible = false
     Main.ClipsDescendants = false
 
-    -- Toggle Logic
     ToggleBtn.MouseButton1Click:Connect(function()
         Main.Visible = not Main.Visible
     end)
@@ -69,7 +61,6 @@ function Library:Window(title)
     MainCorner.CornerRadius = UDim.new(0, 6)
     MainCorner.Parent = Main
 
-    -- Shadow
     MainShadow.Name = "Shadow"
     MainShadow.Parent = Main
     MainShadow.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -82,7 +73,6 @@ function Library:Window(title)
     MainShadow.ScaleType = Enum.ScaleType.Slice
     MainShadow.SliceCenter = Rect.new(23, 23, 277, 277)
 
-    -- Make Main Draggable (Touch Friendly)
     local dragging, dragInput, dragStart, startPos
     
     local function update(input)
@@ -116,7 +106,6 @@ function Library:Window(title)
         end
     end)
 
-    --// TOP BAR //--
     local Top = Instance.new("Frame")
     local TopCorner = Instance.new("UICorner")
     local Line = Instance.new("Frame")
@@ -132,7 +121,6 @@ function Library:Window(title)
     TopCorner.CornerRadius = UDim.new(0, 6)
     TopCorner.Parent = Top
     
-    -- Fix corner radius at bottom of top bar
     local TopCover = Instance.new("Frame")
     TopCover.Parent = Top
     TopCover.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
@@ -151,8 +139,8 @@ function Library:Window(title)
     Logo.BackgroundTransparency = 1
     Logo.Position = UDim2.new(0, 6, 0.5, -15)
     Logo.Size = UDim2.new(0, 26, 0, 30)
-    Logo.Image = "http://www.roblox.com/asset/?id=79389695"
-    Logo.ImageColor3 = Color3.fromRGB(232, 17, 85)
+    Logo.Image = "rbxassetid://79389695"
+    Logo.ImageColor3 = Color3.fromRGB(255, 255, 255)
 
     GameTitle.Parent = Top
     GameTitle.BackgroundTransparency = 1
@@ -168,14 +156,13 @@ function Library:Window(title)
     CloseBtn.BackgroundTransparency = 1
     CloseBtn.Position = UDim2.new(1, -26, 0.5, -10)
     CloseBtn.Size = UDim2.new(0, 20, 0, 20)
-    CloseBtn.Image = "http://www.roblox.com/asset/?id=79389695"
+    CloseBtn.Image = "http://www.roblox.com/asset/?id=7755372427"
     CloseBtn.ImageColor3 = Color3.fromRGB(150, 150, 150)
     
     CloseBtn.MouseButton1Click:Connect(function()
         Main.Visible = false
     end)
 
-    --// CONTAINERS //--
     local TabsFrame = Instance.new("Frame")
     local TabsContainer = Instance.new("ScrollingFrame")
     local PagesFrame = Instance.new("Frame")
@@ -191,7 +178,6 @@ function Library:Window(title)
     TabsCorner.CornerRadius = UDim.new(0, 6)
     TabsCorner.Parent = TabsFrame
 
-    -- Cover right side of tabs frame for flush look
     local TabsCover = Instance.new("Frame")
     TabsCover.Parent = TabsFrame
     TabsCover.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
@@ -219,7 +205,6 @@ function Library:Window(title)
     PagesFrame.Position = UDim2.new(0, 125, 0, 40)
     PagesFrame.Size = UDim2.new(1, -130, 1, -45)
 
-    -- Dynamic Resizing Handle (Bottom Right)
     local Resizer = Instance.new("ImageButton")
     Resizer.Parent = Main
     Resizer.BackgroundTransparency = 1
@@ -256,7 +241,6 @@ function Library:Window(title)
     end)
 
 
-    --// TAB HANDLER //--
     local TabHandler = {}
     local FirstTab = true
 
@@ -297,14 +281,11 @@ function Library:Window(title)
         PagePad.Parent = Page
         PagePad.PaddingRight = UDim.new(0, 6)
 
-        -- Auto Canvas Resize
         PageList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             Page.CanvasSize = UDim2.new(0, 0, 0, PageList.AbsoluteContentSize.Y + 10)
         end)
 
-        -- Tab Activation Logic
         local function Activate()
-            -- Reset all tabs
             for _, v in pairs(TabsContainer:GetChildren()) do
                 if v:IsA("TextButton") then
                     TweenService:Create(v, TweenInfo.new(0.3), {BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(150,150,150)}):Play()
@@ -314,7 +295,6 @@ function Library:Window(title)
                 v.Visible = false
             end
 
-            -- Activate this
             Page.Visible = true
             TweenService:Create(TabBtn, TweenInfo.new(0.3), {BackgroundTransparency = 0.85, TextColor3 = Color3.fromRGB(232, 17, 85)}):Play()
         end
@@ -328,7 +308,6 @@ function Library:Window(title)
 
         local Elements = {}
 
-        --// BUTTON //--
         function Elements:Button(text, callback)
             local Button = Instance.new("TextButton")
             local BtnCorner = Instance.new("UICorner")
@@ -353,7 +332,6 @@ function Library:Window(title)
             end)
         end
 
-        --// TOGGLE //--
         function Elements:Toggle(text, default, callback)
             local ToggleFrame = Instance.new("TextButton")
             local TogCorner = Instance.new("UICorner")
@@ -415,7 +393,6 @@ function Library:Window(title)
             end)
         end
 
-        --// SLIDER (Mobile Optimized) //--
         function Elements:Slider(text, min, max, default, callback)
             local SliderFrame = Instance.new("Frame")
             local SlideCorner = Instance.new("UICorner")
@@ -425,7 +402,7 @@ function Library:Window(title)
             local BarCorner = Instance.new("UICorner")
             local BarFill = Instance.new("Frame")
             local FillCorner = Instance.new("UICorner")
-            local Interact = Instance.new("TextButton") -- Invisible button for bigger hitbox
+            local Interact = Instance.new("TextButton")
 
             min = min or 0
             max = max or 100
@@ -515,7 +492,6 @@ function Library:Window(title)
             end)
         end
 
-        --// DROPDOWN //--
         function Elements:Dropdown(text, options, callback)
             local DropFrame = Instance.new("Frame")
             local DropCorner = Instance.new("UICorner")
@@ -531,7 +507,7 @@ function Library:Window(title)
             DropFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
             DropFrame.Size = UDim2.new(1, 0, 0, 32)
             DropFrame.ClipsDescendants = true
-            DropFrame.ZIndex = 2 -- Higher zindex so it covers buttons below
+            DropFrame.ZIndex = 2
 
             DropCorner.CornerRadius = UDim.new(0, 4)
             DropCorner.Parent = DropFrame
@@ -586,7 +562,6 @@ function Library:Window(title)
                     OptBtn.MouseButton1Click:Connect(function()
                         DropTitle.Text = text .. ": " .. opt
                         pcall(callback, opt)
-                        -- Close
                         dropped = false
                         TweenService:Create(DropFrame, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 32)}):Play()
                         TweenService:Create(DropIcon, TweenInfo.new(0.2), {Rotation = 0}):Play()
