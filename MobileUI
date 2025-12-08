@@ -1,4 +1,4 @@
-pcall(function()               -creds to mjcontega--
+pcall(function()                                                                       --creds to mjcontega--
     game:GetService('CoreGui'):FindFirstChild('BorealisPurple'):Destroy()
 end)
 
@@ -11,12 +11,11 @@ local Mouse = Player:GetMouse()
 
 local Library = {}
 
---// THEME COLORS //--
-local Color_Accent = Color3.fromRGB(140, 20, 255)    -- Dark/Neon Purple
-local Color_Main   = Color3.fromRGB(15, 15, 15)      -- Pitch Black
-local Color_Sec    = Color3.fromRGB(25, 25, 25)      -- Dark Grey
-local Color_Text   = Color3.fromRGB(255, 255, 255)   -- White
-local Color_TextDim= Color3.fromRGB(150, 150, 150)   -- Grey Text
+local Color_Accent = Color3.fromRGB(140, 20, 255)
+local Color_Main   = Color3.fromRGB(15, 15, 15)
+local Color_Sec    = Color3.fromRGB(25, 25, 25)
+local Color_Text   = Color3.fromRGB(255, 255, 255)
+local Color_TextDim= Color3.fromRGB(150, 150, 150)
 
 function Library:Window(title)
     local ScreenGui = Instance.new("ScreenGui")
@@ -26,7 +25,6 @@ function Library:Window(title)
     ScreenGui.ResetOnSpawn = false
     ScreenGui.IgnoreGuiInset = true
 
-    --// TOGGLE BUTTON (Text instead of Logo) //--
     local ToggleBtn = Instance.new("TextButton")
     local ToggleCorner = Instance.new("UICorner")
     local ToggleStroke = Instance.new("UIStroke")
@@ -51,7 +49,6 @@ function Library:Window(title)
     ToggleStroke.Color = Color_Accent
     ToggleStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    --// MAIN FRAME //--
     local Main = Instance.new("Frame")
     local MainCorner = Instance.new("UICorner")
     local MainStroke = Instance.new("UIStroke")
@@ -62,11 +59,10 @@ function Library:Window(title)
     Main.BorderSizePixel = 0
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
     Main.Position = UDim2.new(0.5, 0, 0.5, 0)
-    Main.Size = UDim2.new(0, 0, 0, 0) -- Start closed for animation
+    Main.Size = UDim2.new(0, 0, 0, 0)
     Main.Visible = false
     Main.ClipsDescendants = true
 
-    --// ANIMATION LOGIC //--
     local isOpen = false
     local fullSize = UDim2.new(0, 470, 0, 283)
 
@@ -75,11 +71,9 @@ function Library:Window(title)
         
         if isOpen then
             Main.Visible = true
-            -- Pop Open
             TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = fullSize}):Play()
             TweenService:Create(MainStroke, TweenInfo.new(0.5), {Transparency = 0}):Play()
         else
-            -- Shrink Close
             local closeTween = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)})
             TweenService:Create(MainStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
             closeTween:Play()
@@ -96,7 +90,6 @@ function Library:Window(title)
     MainStroke.Color = Color_Accent
     MainStroke.Transparency = 1 
 
-    -- Dragging Logic
     local dragging, dragInput, dragStart, startPos
     
     local function update(input)
@@ -130,11 +123,10 @@ function Library:Window(title)
         end
     end)
 
-    --// TOP BAR //--
     local Top = Instance.new("Frame")
     local Line = Instance.new("Frame")
     local GameTitle = Instance.new("TextLabel")
-    local CloseBtn = Instance.new("TextButton") -- Changed to TextButton x
+    local CloseBtn = Instance.new("TextButton")
 
     Top.Name = "Top"
     Top.Parent = Main
@@ -146,7 +138,6 @@ function Library:Window(title)
     TopCorner.CornerRadius = UDim.new(0, 8)
     TopCorner.Parent = Top
     
-    -- Square off bottom corners of Top bar
     local TopCover = Instance.new("Frame")
     TopCover.Parent = Top
     TopCover.BackgroundColor3 = Color_Sec
@@ -189,7 +180,6 @@ function Library:Window(title)
         Main.Visible = false
     end)
 
-    --// TABS & PAGES //--
     local TabsFrame = Instance.new("Frame")
     local TabsContainer = Instance.new("ScrollingFrame")
     local PagesFrame = Instance.new("Frame")
@@ -232,7 +222,6 @@ function Library:Window(title)
     PagesFrame.Position = UDim2.new(0, 125, 0, 40)
     PagesFrame.Size = UDim2.new(1, -130, 1, -45)
 
-    -- Resize Handle
     local Resizer = Instance.new("ImageButton")
     Resizer.Parent = Main
     Resizer.BackgroundTransparency = 1
@@ -261,7 +250,7 @@ function Library:Window(title)
             local newX = math.max(350, startSize.X.Offset + delta.X)
             local newY = math.max(200, startSize.Y.Offset + delta.Y)
             Main.Size = UDim2.new(0, newX, 0, newY)
-            fullSize = UDim2.new(0, newX, 0, newY) -- Update fullsize for next open
+            fullSize = UDim2.new(0, newX, 0, newY)
         end
     end)
 
@@ -371,7 +360,6 @@ function Library:Window(title)
             end)
 
             Button.MouseButton1Click:Connect(function()
-                -- Flash Purple
                 TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color_Accent, TextColor3 = Color_Main}):Play()
                 task.wait(0.1)
                 TweenService:Create(Button, TweenInfo.new(0.3), {BackgroundColor3 = Color_Sec, TextColor3 = Color_Text}):Play()
@@ -426,7 +414,7 @@ function Library:Window(title)
             Check.BackgroundColor3 = Color_Accent
             Check.AnchorPoint = Vector2.new(0.5,0.5)
             Check.Position = UDim2.new(0.5,0,0.5,0)
-            Check.Size = UDim2.new(0, 0, 0, 0) -- Scaled to 0 when off
+            Check.Size = UDim2.new(0, 0, 0, 0)
 
             CheckCorner.CornerRadius = UDim.new(0, 2)
             CheckCorner.Parent = Check
