@@ -1,5 +1,5 @@
-pcall(function()           --creds to mjcontega--
-    game:GetService('CoreGui'):FindFirstChild('BorealisBlue'):Destroy()
+pcall(function()               -creds to mjcontega--
+    game:GetService('CoreGui'):FindFirstChild('BorealisPurple'):Destroy()
 end)
 
 local TweenService = game:GetService("TweenService")
@@ -12,7 +12,7 @@ local Mouse = Player:GetMouse()
 local Library = {}
 
 --// THEME COLORS //--
-local Color_Accent = Color3.fromRGB(0, 170, 255)     -- Blue
+local Color_Accent = Color3.fromRGB(140, 20, 255)    -- Dark/Neon Purple
 local Color_Main   = Color3.fromRGB(15, 15, 15)      -- Pitch Black
 local Color_Sec    = Color3.fromRGB(25, 25, 25)      -- Dark Grey
 local Color_Text   = Color3.fromRGB(255, 255, 255)   -- White
@@ -20,7 +20,7 @@ local Color_TextDim= Color3.fromRGB(150, 150, 150)   -- Grey Text
 
 function Library:Window(title)
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "BorealisBlue"
+    ScreenGui.Name = "BorealisPurple"
     ScreenGui.Parent = game:GetService("CoreGui")
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     ScreenGui.ResetOnSpawn = false
@@ -371,7 +371,7 @@ function Library:Window(title)
             end)
 
             Button.MouseButton1Click:Connect(function()
-                -- Flash Blue
+                -- Flash Purple
                 TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color_Accent, TextColor3 = Color_Main}):Play()
                 task.wait(0.1)
                 TweenService:Create(Button, TweenInfo.new(0.3), {BackgroundColor3 = Color_Sec, TextColor3 = Color_Text}):Play()
@@ -681,4 +681,4 @@ function Library:Window(title)
     return TabHandler
 end
 
-return Library 
+return Library
