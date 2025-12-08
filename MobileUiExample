@@ -1,0 +1,79 @@
+--// Load Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/magbux/BorealisUiLib/refs/heads/main/MobileUI"))()
+
+--// Create Window
+local Window = Library:Window("Purple Hub Mobile")
+
+--// Create Tabs
+local MainTab = Window:Tab("Main")
+local PlayerTab = Window:Tab("Player")
+local VisualsTab = Window:Tab("Visuals")
+local MiscTab = Window:Tab("Misc")
+
+--// MAIN TAB //--
+MainTab:Label("Welcome to the Script!")
+
+MainTab:Toggle("Auto Farm", false, function(state)
+    getgenv().AutoFarm = state
+    
+    if state then
+        print("Auto Farm Enabled")
+        while getgenv().AutoFarm do
+            task.wait(0.5)
+            -- Add your farming logic here
+        end
+    else
+        print("Auto Farm Disabled")
+    end
+end)
+
+MainTab:Dropdown("Select Weapon", {"Sword", "Bow", "Magic", "Gun"}, function(selected)
+    print("Weapon Selected: " .. selected)
+end)
+
+MainTab:Button("Collect All Items", function()
+    print("Collecting items...")
+    -- Add item collection logic here
+end)
+
+--// PLAYER TAB //--
+PlayerTab:Slider("WalkSpeed", 16, 200, 16, function(value)
+    if game.Players.LocalPlayer.Character then
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+    end
+end)
+
+PlayerTab:Slider("JumpPower", 50, 300, 50, function(value)
+    if game.Players.LocalPlayer.Character then
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+    end
+end)
+
+PlayerTab:Toggle("Infinite Jump", false, function(state)
+    getgenv().InfJump = state
+    game:GetService("UserInputService").JumpRequest:Connect(function()
+        if getgenv().InfJump then
+            game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping")
+        end
+    end)
+end)
+
+--// VISUALS TAB //--
+VisualsTab:Toggle("Enable ESP", false, function(state)
+    print("ESP Toggled: " .. tostring(state))
+end)
+
+VisualsTab:Dropdown("ESP Color", {"Red", "Green", "Blue", "Purple"}, function(val)
+    print("ESP Color changed to: " .. val)
+end)
+
+--// MISC TAB //--
+MiscTab:Label("Credits: Borealis Remake")
+
+MiscTab:Button("Rejoin Server", function()
+    game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+end)
+
+MiscTab:Button("Destroy UI", function()
+    game:GetService("CoreGui"):FindFirstChild("BorealisPurple"):Destroy()
+end)
