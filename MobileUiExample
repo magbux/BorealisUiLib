@@ -68,7 +68,7 @@ VisualsTab:Dropdown("ESP Color", {"Red", "Green", "Blue", "Purple"}, function(va
 end)
 
 --// MISC TAB //--
-MiscTab:Label("Credits: Borealis Remake")
+MiscTab:Label("Remake For Mobile By The Owner Of Borealis")
 
 MiscTab:Button("Rejoin Server", function()
     game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
