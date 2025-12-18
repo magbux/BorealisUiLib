@@ -79,6 +79,27 @@ local function AddRipple(Button)
 	end)
 end
 
+local function MakeDraggable(topbar, object)
+	local dragging, dragInput, dragStart, startPos
+	topbar.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true; dragStart = input.Position; startPos = object.Position
+		end
+	end)
+	topbar.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			local delta = input.Position - dragStart
+			object.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		end
+	end)
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+	end)
+end
+
 function Borealis.new(title)
 	local Library = {}
 	local ThemeObjects = {}
@@ -298,7 +319,7 @@ function Borealis.new(title)
 			BorderSizePixel = 0,
 			Size = UDim2.new(1, 0, 0, 30),
 			Font = Enum.Font.GothamMedium,
-			Text = "           " .. name, -- Changed spacing here
+			Text = "           " .. name, 
 			TextColor3 = Color3.fromRGB(150, 150, 150),
 			TextSize = 13,
 			TextXAlignment = Enum.TextXAlignment.Left,
@@ -309,7 +330,7 @@ function Borealis.new(title)
 			local IconImg = Create("ImageLabel", {
 				Parent = TabBtn,
 				BackgroundTransparency = 1,
-				Position = UDim2.new(0, 10, 0.5, -8), -- Adjusted icon position slightly
+				Position = UDim2.new(0, 10, 0.5, -8),
 				Size = UDim2.new(0, 16, 0, 16),
 				Image = icon,
 				ImageColor3 = Color3.fromRGB(150, 150, 150)
@@ -352,7 +373,7 @@ function Borealis.new(title)
 			Parent = Pages,
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, 0, 1, 0),
-			ScrollBarThickness = 0, -- REMOVED SCROLLBAR
+			ScrollBarThickness = 0,
 			ScrollBarImageColor3 = Theme.Accent,
 			Visible = false,
 			CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -488,9 +509,9 @@ function Borealis.new(title)
 				Parent = SectionFrame,
 				BackgroundColor3 = Color3.fromRGB(0,0,0),
 				BackgroundTransparency = 1,
-				Position = UDim2.new(0, 0, 0, 35),
+				Position = UDim2.new(0, 0, 0, 30), -- FIXED: Changed from 35 to 30 to remove the line
 				Size = UDim2.new(1, 0, 0, 0),
-				ClipsDescendants = false -- FIXED: Changed from true to false
+				ClipsDescendants = false 
 			})
 			
 			local ContainerLayout = Create("UIListLayout", {
@@ -891,26 +912,11 @@ function Borealis.new(title)
 			end
 
 			function Section:AddColorPicker(props)
-				local ColorPickerToggled = false
-				local OldToggleColor = Color3.fromRGB(0, 0, 0)
-				local OldColor = Color3.fromRGB(0, 0, 0)
-				local OldColorSelectionPosition = nil
-				local OldHueSelectionPosition = nil
-				local ColorH, ColorS, ColorV = 1, 1, 1
-				local RainbowColorPicker = false
-				local ColorPickerInput = nil
-				local ColorInput = nil
-				local HueInput = nil
-				
-				local RainbowColorValue = 0
-				local HueSelectionPosition = 0
-
 				local Box = Create("Frame", {
 					Parent = Container,
 					BackgroundColor3 = Theme.LightContrast,
 					BorderSizePixel = 0,
-					Size = UDim2.new(1, 0, 0, 36),
-					ClipsDescendants = true
+					Size = UDim2.new(1, 0, 0, 36)
 				})
 				Create("UICorner", {Parent = Box, CornerRadius = UDim.new(0, 4)})
 
@@ -943,191 +949,139 @@ function Borealis.new(title)
 				})
 				AddRipple(TriggerBtn)
 
-				local PickerContainer = Create("Frame", {
-					Parent = Box,
-					BackgroundTransparency = 1,
-					Position = UDim2.new(0, 10, 0, 40),
-					Size = UDim2.new(1, -20, 0, 140)
-				})
-				
-				local SaturationMap = Create("ImageLabel", {
-					Parent = PickerContainer,
-					BackgroundColor3 = Color3.fromRGB(255, 0, 0),
-					BorderSizePixel = 0,
-					Size = UDim2.new(0.8, 0, 0.85, 0),
-					Image = "rbxassetid://4155801252",
-					Active = true
-				})
-				Create("UICorner", {Parent = SaturationMap, CornerRadius = UDim.new(0, 4)})
-				
-				local SaturationCursor = Create("ImageLabel", {
-					Parent = SaturationMap,
-					BackgroundTransparency = 1,
-					Size = UDim2.new(0, 14, 0, 14),
-					Image = "rbxassetid://4805639000",
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					Position = UDim2.new(0,0,0,0)
-				})
-
-				local HueMap = Create("ImageLabel", {
-					Parent = PickerContainer,
-					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BorderSizePixel = 0,
-					Position = UDim2.new(0.85, 0, 0, 0),
-					Size = UDim2.new(0.15, 0, 0.85, 0),
-					Active = true
-				})
-				Create("UICorner", {Parent = HueMap, CornerRadius = UDim.new(0, 4)})
-				
-				local HueGradient = Create("UIGradient", {
-					Parent = HueMap,
-					Rotation = 270,
-					Color = ColorSequence.new {
-						ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 4)),
-						ColorSequenceKeypoint.new(0.20, Color3.fromRGB(234, 255, 0)),
-						ColorSequenceKeypoint.new(0.40, Color3.fromRGB(21, 255, 0)),
-						ColorSequenceKeypoint.new(0.60, Color3.fromRGB(0, 255, 255)),
-						ColorSequenceKeypoint.new(0.80, Color3.fromRGB(0, 17, 255)),
-						ColorSequenceKeypoint.new(0.90, Color3.fromRGB(255, 0, 251)),
-						ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 4))
-					}
-				})
-				
-				local HueCursor = Create("Frame", {
-					Parent = HueMap,
-					BackgroundColor3 = Color3.fromRGB(255,255,255),
-					BorderSizePixel = 1,
-					BorderColor3 = Color3.fromRGB(0,0,0),
-					Size = UDim2.new(1, 0, 0, 4),
-					AnchorPoint = Vector2.new(0, 0.5),
-					Position = UDim2.new(0, 0, 0, 0)
-				})
-				
-				local RainbowToggleBtn = Create("TextButton", {
-					Parent = PickerContainer,
-					BackgroundColor3 = Theme.DarkContrast,
-					BorderSizePixel = 0,
-					Position = UDim2.new(0, 0, 0.9, 0),
-					Size = UDim2.new(1, 0, 0.1, 0),
-					Font = Enum.Font.Gotham,
-					Text = "Rainbow Mode",
-					TextColor3 = Color3.fromRGB(200,200,200),
-					TextSize = 11
-				})
-				Create("UICorner", {Parent = RainbowToggleBtn, CornerRadius = UDim.new(0,4)})
-				
-				local function UpdateColorPicker(nope)
-					CurrentColorFrame.BackgroundColor3 = Color3.fromHSV(ColorH, ColorS, ColorV)
-					SaturationMap.BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1)
-					if props.Callback then props.Callback(CurrentColorFrame.BackgroundColor3) end
-					Library:UpdateTheme(CurrentColorFrame.BackgroundColor3)
-				end
-
-				ColorH = 1 - (math.clamp(HueCursor.AbsolutePosition.Y - HueMap.AbsolutePosition.Y, 0, HueMap.AbsoluteSize.Y) / HueMap.AbsoluteSize.Y)
-				ColorS = (math.clamp(SaturationCursor.AbsolutePosition.X - SaturationMap.AbsolutePosition.X, 0, SaturationMap.AbsoluteSize.X) / SaturationMap.AbsoluteSize.X)
-				ColorV = 1 - (math.clamp(SaturationCursor.AbsolutePosition.Y - SaturationMap.AbsolutePosition.Y, 0, SaturationMap.AbsoluteSize.Y) / SaturationMap.AbsoluteSize.Y)
-				
+				local ColorH, ColorS, ColorV = 1, 1, 1
 				if props.Default then
 					ColorH, ColorS, ColorV = Color3.toHSV(props.Default)
-					ColorV = 1 - ColorV
-					ColorH, ColorS, ColorV = Color3.toHSV(props.Default)
-					SaturationCursor.Position = UDim2.new(ColorS, 0, 1 - ColorV, 0)
-					HueCursor.Position = UDim2.new(0, 0, 1 - ColorH, 0)
-					UpdateColorPicker()
 				end
 
-				SaturationMap.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						if RainbowColorPicker then return end
-						if ColorInput then ColorInput:Disconnect() end
-						
-						ColorInput = RunService.RenderStepped:Connect(function()
-							local ColorX = (math.clamp(Mouse.X - SaturationMap.AbsolutePosition.X, 0, SaturationMap.AbsoluteSize.X) / SaturationMap.AbsoluteSize.X)
-							local ColorY = (math.clamp(Mouse.Y - SaturationMap.AbsolutePosition.Y, 0, SaturationMap.AbsoluteSize.Y) / SaturationMap.AbsoluteSize.Y)
-
-							SaturationCursor.Position = UDim2.new(ColorX, 0, ColorY, 0)
-							ColorS = ColorX
-							ColorV = 1 - ColorY
-							UpdateColorPicker(true)
-						end)
-					end
-				end)
-
-				SaturationMap.InputEnded:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						if ColorInput then ColorInput:Disconnect() end
-					end
-				end)
-
-				HueMap.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						if RainbowColorPicker then return end
-						if HueInput then HueInput:Disconnect() end
-
-						HueInput = RunService.RenderStepped:Connect(function()
-							local HueY = (math.clamp(Mouse.Y - HueMap.AbsolutePosition.Y, 0, HueMap.AbsoluteSize.Y) / HueMap.AbsoluteSize.Y)
-							HueCursor.Position = UDim2.new(0, 0, HueY, 0)
-							ColorH = 1 - HueY
-							UpdateColorPicker(true)
-						end)
-					end
-				end)
-
-				HueMap.InputEnded:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						if HueInput then HueInput:Disconnect() end
-					end
-				end)
-
-				RainbowToggleBtn.MouseButton1Click:Connect(function()
-					RainbowColorPicker = not RainbowColorPicker
-					if ColorInput then ColorInput:Disconnect() end
-					if HueInput then HueInput:Disconnect() end
-
-					if RainbowColorPicker then
-						TweenService:Create(RainbowToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, TextColor3 = Color3.new(1,1,1)}):Play()
-						
-						OldToggleColor = CurrentColorFrame.BackgroundColor3
-						OldColor = SaturationMap.BackgroundColor3
-						OldColorSelectionPosition = SaturationCursor.Position
-						OldHueSelectionPosition = HueCursor.Position
-
-						while RainbowColorPicker do
-							RainbowColorValue = RainbowColorValue + 1/255
-							if RainbowColorValue >= 1 then RainbowColorValue = 0 end
-							HueSelectionPosition = HueSelectionPosition + 1
-							if HueSelectionPosition == 80 then HueSelectionPosition = 0 end
-							
-							CurrentColorFrame.BackgroundColor3 = Color3.fromHSV(RainbowColorValue, 1, 1)
-							SaturationMap.BackgroundColor3 = Color3.fromHSV(RainbowColorValue, 1, 1)
-							
-							SaturationCursor.Position = UDim2.new(1, 0, 0, 0)
-							HueCursor.Position = UDim2.new(0, 0, 0, HueSelectionPosition)
-							
-							if props.Callback then props.Callback(CurrentColorFrame.BackgroundColor3) end
-							Library:UpdateTheme(CurrentColorFrame.BackgroundColor3)
-							RunService.RenderStepped:Wait()
-						end
-					else
-						TweenService:Create(RainbowToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.DarkContrast, TextColor3 = Color3.fromRGB(200,200,200)}):Play()
-						
-						CurrentColorFrame.BackgroundColor3 = OldToggleColor
-						SaturationMap.BackgroundColor3 = OldColor
-						SaturationCursor.Position = OldColorSelectionPosition
-						HueCursor.Position = OldHueSelectionPosition
-						
-						if props.Callback then props.Callback(CurrentColorFrame.BackgroundColor3) end
-						Library:UpdateTheme(CurrentColorFrame.BackgroundColor3)
-					end
-				end)
-
 				TriggerBtn.MouseButton1Click:Connect(function()
-					ColorPickerToggled = not ColorPickerToggled
-					if ColorPickerToggled then
-						TweenService:Create(Box, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 200)}):Play()
-					else
-						TweenService:Create(Box, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 36)}):Play()
+					if ScreenGui:FindFirstChild("ColorPickerWindow") then
+						ScreenGui.ColorPickerWindow:Destroy()
+						return
 					end
+
+					local PickerWindow = Create("Frame", {
+						Name = "ColorPickerWindow",
+						Parent = ScreenGui,
+						BackgroundColor3 = Theme.LightContrast,
+						BorderSizePixel = 0,
+						Size = UDim2.new(0, 200, 0, 230),
+						Position = UDim2.new(0, Mouse.X + 10, 0, Mouse.Y),
+						ZIndex = 10
+					})
+					Create("UICorner", {Parent = PickerWindow, CornerRadius = UDim.new(0, 6)})
+					MakeDraggable(PickerWindow, PickerWindow)
+
+					local PickerHeader = Create("Frame", {
+						Parent = PickerWindow,
+						BackgroundColor3 = Theme.DarkContrast,
+						Size = UDim2.new(1,0,0,25)
+					})
+					Create("UICorner", {Parent = PickerHeader, CornerRadius = UDim.new(0,6)})
+					
+					Create("TextLabel", {
+						Parent = PickerHeader,
+						BackgroundTransparency = 1,
+						Size = UDim2.new(1,0,1,0),
+						Text = props.Name,
+						Font = Enum.Font.GothamBold,
+						TextColor3 = Theme.TextColor,
+						TextSize = 12
+					})
+
+					local SaturationMap = Create("ImageLabel", {
+						Parent = PickerWindow,
+						BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1),
+						BorderSizePixel = 0,
+						Position = UDim2.new(0, 10, 0, 35),
+						Size = UDim2.new(0, 150, 0, 150),
+						Image = "rbxassetid://4155801252"
+					})
+					
+					local SatCursor = Create("ImageLabel", {
+						Parent = SaturationMap,
+						BackgroundTransparency = 1,
+						Size = UDim2.new(0, 10, 0, 10),
+						Image = "rbxassetid://4805639000",
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						Position = UDim2.new(ColorS, 0, 1-ColorV, 0)
+					})
+
+					local HueMap = Create("ImageLabel", {
+						Parent = PickerWindow,
+						BackgroundColor3 = Color3.new(1,1,1),
+						BorderSizePixel = 0,
+						Position = UDim2.new(0, 170, 0, 35),
+						Size = UDim2.new(0, 20, 0, 150),
+						Image = "rbxassetid://3570695787"
+					})
+					
+					local HueCursor = Create("Frame", {
+						Parent = HueMap,
+						BackgroundColor3 = Color3.new(1,1,1),
+						BorderColor3 = Color3.new(0,0,0),
+						Size = UDim2.new(1, 0, 0, 2),
+						AnchorPoint = Vector2.new(0, 0.5),
+						Position = UDim2.new(0, 0, 1-ColorH, 0)
+					})
+
+					local function UpdateColor()
+						local newColor = Color3.fromHSV(ColorH, ColorS, ColorV)
+						CurrentColorFrame.BackgroundColor3 = newColor
+						SaturationMap.BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1)
+						if props.Callback then props.Callback(newColor) end
+						Library:UpdateTheme(newColor)
+					end
+
+					local draggingSat, draggingHue = false, false
+
+					SaturationMap.InputBegan:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingSat = true end
+					end)
+					
+					HueMap.InputBegan:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingHue = true end
+					end)
+
+					UserInputService.InputEnded:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+							draggingSat = false
+							draggingHue = false
+						end
+					end)
+
+					RunService.RenderStepped:Connect(function()
+						if not PickerWindow.Parent then return end
+						
+						if draggingSat then
+							local mouseX = math.clamp(Mouse.X - SaturationMap.AbsolutePosition.X, 0, 150)
+							local mouseY = math.clamp(Mouse.Y - SaturationMap.AbsolutePosition.Y, 0, 150)
+							SatCursor.Position = UDim2.new(0, mouseX, 0, mouseY)
+							ColorS = mouseX / 150
+							ColorV = 1 - (mouseY / 150)
+							UpdateColor()
+						end
+						
+						if draggingHue then
+							local mouseY = math.clamp(Mouse.Y - HueMap.AbsolutePosition.Y, 0, 150)
+							HueCursor.Position = UDim2.new(0, 0, 0, mouseY)
+							ColorH = 1 - (mouseY / 150)
+							UpdateColor()
+						end
+					end)
+					
+					local ClosePick = Create("TextButton", {
+						Parent = PickerWindow,
+						BackgroundColor3 = Theme.DarkContrast,
+						Position = UDim2.new(0, 10, 1, -30),
+						Size = UDim2.new(1, -20, 0, 20),
+						Font = Enum.Font.GothamBold,
+						Text = "Close",
+						TextColor3 = Theme.TextColor,
+						TextSize = 12
+					})
+					Create("UICorner", {Parent = ClosePick, CornerRadius = UDim.new(0,4)})
+					ClosePick.MouseButton1Click:Connect(function() PickerWindow:Destroy() end)
 				end)
 			end
 
