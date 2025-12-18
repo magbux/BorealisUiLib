@@ -298,7 +298,7 @@ function Borealis.new(title)
 			BorderSizePixel = 0,
 			Size = UDim2.new(1, 0, 0, 30),
 			Font = Enum.Font.GothamMedium,
-			Text = "       " .. name,
+			Text = "           " .. name, -- Changed spacing here
 			TextColor3 = Color3.fromRGB(150, 150, 150),
 			TextSize = 13,
 			TextXAlignment = Enum.TextXAlignment.Left,
@@ -309,7 +309,7 @@ function Borealis.new(title)
 			local IconImg = Create("ImageLabel", {
 				Parent = TabBtn,
 				BackgroundTransparency = 1,
-				Position = UDim2.new(0, 8, 0.5, -8),
+				Position = UDim2.new(0, 10, 0.5, -8), -- Adjusted icon position slightly
 				Size = UDim2.new(0, 16, 0, 16),
 				Image = icon,
 				ImageColor3 = Color3.fromRGB(150, 150, 150)
@@ -352,7 +352,7 @@ function Borealis.new(title)
 			Parent = Pages,
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, 0, 1, 0),
-			ScrollBarThickness = 2,
+			ScrollBarThickness = 0, -- REMOVED SCROLLBAR
 			ScrollBarImageColor3 = Theme.Accent,
 			Visible = false,
 			CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -490,7 +490,7 @@ function Borealis.new(title)
 				BackgroundTransparency = 1,
 				Position = UDim2.new(0, 0, 0, 35),
 				Size = UDim2.new(1, 0, 0, 0),
-				ClipsDescendants = true
+				ClipsDescendants = false -- FIXED: Changed from true to false
 			})
 			
 			local ContainerLayout = Create("UIListLayout", {
