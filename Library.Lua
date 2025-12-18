@@ -7,6 +7,17 @@ local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
+local function GetSafeGuiParent()
+	local success, result = pcall(function() return CoreGui end)
+	if success then
+		return result
+	else
+		return LocalPlayer:WaitForChild("PlayerGui")
+	end
+end
+
+local GuiParent = GetSafeGuiParent()
+
 local Borealis = {}
 local UIConfig = { Keybind = Enum.KeyCode.RightControl }
 
@@ -25,8 +36,8 @@ local Theme = {
 	TextColor = Color3.fromRGB(255, 255, 255)
 }
 
-if game.CoreGui:FindFirstChild("BorealisUI") then
-	game.CoreGui.BorealisUI:Destroy()
+if GuiParent:FindFirstChild("BorealisUI") then
+	GuiParent.BorealisUI:Destroy()
 end
 
 local function Create(class, properties)
@@ -81,7 +92,7 @@ function Borealis.new(title)
 
 	local ScreenGui = Create("ScreenGui", {
 		Name = "BorealisUI",
-		Parent = CoreGui,
+		Parent = GuiParent,
 		ResetOnSpawn = false,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	})
